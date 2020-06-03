@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Othello met klassen</title>
+    <script src="othello.js"></script>
+</head>
+<body onload="othello()">
+<p><form name="myForm">
+<input type="radio" id="STS" name="spelersituatie" value="2spelers">
+<label for="spelersituatie"> speler tegen speler</label><br>
+<input type="radio" id="STC" name="spelersituatie" value="1speler">
+<label for="spelersituatie"> speler tegen computer</label><br>
+<input type="radio" id="CTC" name="spelersituatie" value="2computers">
+<label for="spelersituatie"> computer tegen computer</label><br>
+</form></p>
+<p><form name="form">
+    <select name="bordgrootte" id="bordgrootte">
+        <option value="6X6">6X6</option>
+        <option value="8X8">8X8</option>
+        <option value="10X10">10X10</option>
+        <option value="12X12">12X12</option>
+        <option value="14X14">14X14</option>
+        <option value="16X16">16X16</option>
+    </select>
+</form></p>
+<p><button id="myBtn">nieuw spel</button></p>
+<p>Een nieuw spel is altijd met de geselecteerde situatie.<br>
+Veranderig van situatie begint een nieuw spel.</p>
+
+<p>De eerste speler is altijd zwart en als je tegen een computer begin jij.</p>
+<canvas id="bordCanvas"></canvas>
+</body>
+</html>

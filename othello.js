@@ -15,7 +15,8 @@ function othello() {
     let spelersituatie;
     let nieuweRij;
     let nieuweKol;
-
+    let zwartPast = false;
+    let witPast = false;
 
     class Richting {
         constructor(naam, deltaRij, deltaKol) {
@@ -43,6 +44,7 @@ function othello() {
             this.stenen = getStenen();
             this.islStenenRij = [];
             this.islStenenKol = [];
+            let pas =false;
 
             function getStenen() {
                 let result = [];
@@ -167,10 +169,36 @@ function othello() {
             this.stenen[rij + 1][kol] = Steen.zwart;
         }
         doeZet(rij,kol,kleur){
-            bord.stenen[rij][kol] = kleur;
-            tekenBord();
-            geldigeZetten++;
-            bord.spelGedaan();
+            if(this.pas===false)
+            {
+                this.stenen[rij][kol] = kleur;
+                this.zwartPast = false;
+                this.witPast = false;
+                tekenBord();
+                geldigeZetten++;
+                this.spelGedaan();
+            }
+            
+        }
+        alleenPassen(){
+            if(spelerKleur===Steen.wit)
+            {if(witPast === false)
+                {alert("Geen zet mogelijk. pas!");
+                geldigeZetten++;}
+            witPast = true;
+            }
+            if(spelerKleur===Steen.zwart)
+            {if(zwartPast === false)
+                {alert("Geen zet mogelijk. pas!");
+                geldigeZetten++;}
+            zwartPast = true;
+            }
+            if(witPast&&zwartPast){
+                return false;
+            }
+
+            this.pas =true;
+            return true;
         }
         spelGedaan(){
             GeldigeZetMog = false;
@@ -185,13 +213,30 @@ function othello() {
                         aantal1++;
                     if(this.stenen[rij][kol] === 2)
                         aantal2++;
-                    if(this.isGeldigeZetZonderZet(rij,kol,spelerKleur))
-                        GeldigeZetMog = true;                    
+                    if(this.isGeldigeZetZonderZet(rij,kol,spelerKleur)){
+                        GeldigeZetMog = true;
+                        this.pas = false;
+                    }                    
                 }
             }
             if(GeldigeZetMog === false){
-                alert("Geen zet mogelijk. pas!")
-                return true;
+                if(this.alleenPassen()){
+                    return false;
+                }
+                else{
+                    if(aantal1>aantal2){
+                        alert("zwart wint");
+                        return true;
+                    }
+                    if(aantal1<aantal2){
+                        alert("wit wint");
+                        return true;
+                    }
+                    if(aantal1===aantal2){
+                        alert("gelijk stand");
+                        return true;
+                    }
+                }
             }
             if(aantal1===0&&aantal2>0){
                 alert("wit wint");
@@ -305,8 +350,8 @@ function othello() {
                             randomKol = Math.floor(Math.random()*bord.kolommen);
                             if(bord.isGeldigeZet(randomRij,randomKol,spelerKleur))
                                 geldigeZet=true;
-                        }while(!geldigeZet)
-                        if(geldigeZet && bord.spelGedaan()===false)
+                        }while(!geldigeZet && bord.spelGedaan()===false)
+                        if(geldigeZet)
                             bord.doeZet(randomRij,randomKol,spelerKleur);
                     },1000);
 
@@ -376,8 +421,8 @@ function othello() {
                                 randomKol = Math.floor(Math.random()*bord.kolommen);
                                 if(bord.isGeldigeZet(randomRij,randomKol,spelerKleur))
                                     geldigeZet=true;
-                            }while(!geldigeZet)
-                            if(geldigeZet && bord.spelGedaan()===false){
+                            }while(!geldigeZet && bord.spelGedaan()===false)
+                            if(geldigeZet){
                                 bord.doeZet(randomRij,randomKol,spelerKleur); 
                             }
                         }
@@ -392,12 +437,12 @@ function othello() {
                                 randomKol = Math.floor(Math.random()*bord.kolommen);
                                 if(bord.isGeldigeZet(randomRij,randomKol,spelerKleur))
                                     geldigeZet=true;
-                            }while(!geldigeZet)
-                            if(geldigeZet && bord.spelGedaan()===false){
+                            }while(!geldigeZet && bord.spelGedaan()===false)
+                            if(geldigeZet){
                                 bord.doeZet(randomRij,randomKol,spelerKleur); 
                             }
                         } 
-                        if(bord.spelGedaan()&&bord.GeldigeZetMog === false)
+                        if(bord.spelGedaan())
                             clearInterval(i);             
                     }, 1000);
                 }

@@ -306,7 +306,7 @@ function othello() {
                             if(bord.isGeldigeZet(randomRij,randomKol,spelerKleur))
                                 geldigeZet=true;
                         }while(!geldigeZet)
-                        if(geldigeZet && bord.spelGedaan()===true)
+                        if(geldigeZet && bord.spelGedaan()===false)
                             bord.doeZet(randomRij,randomKol,spelerKleur);
                     },1000);
 

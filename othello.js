@@ -10,13 +10,11 @@ function othello() {
        }
     };    
     let geldigeZetten = 0;
-    let GeldigeZetMog = false;
     let spelerKleur;
     let spelersituatie;
     let nieuweRij;
     let nieuweKol;
-    let zwartPast = false;
-    let witPast = false;
+
 
     class Richting {
         constructor(naam, deltaRij, deltaKol) {
@@ -27,14 +25,14 @@ function othello() {
     }
 
     let richtingen=[
-        new Richting("noord",-1,0),
-        new Richting("noordoost",-1,1),    
+        new Richting("noord",1,0),
+        new Richting("noordoost",1,1),    
         new Richting("oost",0,1),
-        new Richting("zuidoost",1,1),
-        new Richting("zuid",1,0),
-        new Richting("zuidwest",1,-1),
+        new Richting("zuidoost",-1,1),
+        new Richting("zuid",-1,0),
+        new Richting("zuidwest",-1,-1),
         new Richting("west",0,-1),
-        new Richting("noordwest",-1,-1),
+        new Richting("noordwest",1,-1),
     ]
 
     class Bord {
@@ -44,7 +42,10 @@ function othello() {
             this.stenen = getStenen();
             this.islStenenRij = [];
             this.islStenenKol = [];
-            let pas =false;
+            this.aantal1=0;
+            this.aantal2=0;
+            this.zwartPast = false;
+            this.witPast = false;
 
             function getStenen() {
                 let result = [];
@@ -169,98 +170,76 @@ function othello() {
             this.stenen[rij + 1][kol] = Steen.zwart;
         }
         doeZet(rij,kol,kleur){
-            if(this.pas===false)
-            {
                 this.stenen[rij][kol] = kleur;
                 this.zwartPast = false;
                 this.witPast = false;
                 tekenBord();
                 geldigeZetten++;
-                this.spelGedaan();
-            }
-            
+                console.log(geldigeZetten + "Zetten zetten");
         }
-        alleenPassen(){
-            if(spelerKleur===Steen.wit)
-            {if(witPast === false)
-                {alert("Geen zet mogelijk. pas!");
-                geldigeZetten++;}
-            witPast = true;
-            }
-            if(spelerKleur===Steen.zwart)
-            {if(zwartPast === false)
-                {alert("Geen zet mogelijk. pas!");
-                geldigeZetten++;}
-            zwartPast = true;
-            }
-            if(witPast&&zwartPast){
-                return false;
-            }
-
-            this.pas =true;
-            return true;
-        }
-        spelGedaan(){
-            GeldigeZetMog = false;
-            let aantal1=0;
-            let aantal2=0;
-            let aantal0 = 0;
+        isGeldigeZetMog(){
             for (let rij = 0; rij < this.rijen; rij++) {
                 for (let kol = 0; kol < this.kolommen; kol++) {
-                    if(this.stenen[rij][kol] === 0)
-                        aantal0++;
-                    if(this.stenen[rij][kol] === 1)
-                        aantal1++;
-                    if(this.stenen[rij][kol] === 2)
-                        aantal2++;
                     if(this.isGeldigeZetZonderZet(rij,kol,spelerKleur)){
-                        GeldigeZetMog = true;
-                        this.pas = false;
+                        return true;
                     }                    
                 }
             }
-            if(GeldigeZetMog === false){
-                if(this.alleenPassen()){
-                    return false;
+            return false;
+        }
+        passen(){
+            if(spelerKleur===Steen.wit)
+            {if(this.witPast === false)
+                {alert("Geen zet mogelijk voor wit. Je moet passen.");
+                geldigeZetten++;
+                console.log(geldigeZetten+"Passen Wit");
                 }
-                else{
-                    if(aantal1>aantal2){
-                        alert("zwart wint");
-                        return true;
-                    }
-                    if(aantal1<aantal2){
-                        alert("wit wint");
-                        return true;
-                    }
-                    if(aantal1===aantal2){
-                        alert("gelijk stand");
-                        return true;
-                    }
-                }
+            this.witPast = true;
             }
-            if(aantal1===0&&aantal2>0){
-                alert("wit wint");
+            if(spelerKleur===Steen.zwart)
+            {if(this.zwartPast === false)
+                {alert("Geen zet mogelijk voor zwart. Je moet passen.");
+                geldigeZetten++;
+                console.log(geldigeZetten+" Passen zwart");
+            }
+            this.zwartPast = true;
+            }
+        }
+        spelGedaan(){
+            this.aantal1 = 0;
+            this.aantal2 = 0;
+            let aantal0 = 0;
+            for (let rij = 0; rij < this.rijen; rij++) {
+                for (let kol = 0; kol < this.kolommen; kol++) {
+                    if(this.stenen[rij][kol] === 1)
+                        this.aantal1++;
+                    if(this.stenen[rij][kol] === 2)
+                        this.aantal2++;
+                    if(this.stenen[rij][kol] === 0)
+                        aantal0++;
+                }                    
+            }
+            if(aantal0 === 0)
+                return true;
+            if(this.witPast&&this.zwartPast){
                 return true;
             }
-            if(aantal2 === 0&& aantal1>0){
-                alert("zwart wint");
-                return true;                
-            }
-            if(aantal0 === 0){
-                if(aantal1>aantal2){
+            return false;
+        }
+        winaarBepalen(){
+                if(this.aantal1>this.aantal2){
                     alert("zwart wint");
                     return true;
                 }
-                if(aantal1<aantal2){
+                if(this.aantal1<this.aantal2){
                     alert("wit wint");
                     return true;
                 }
-                if(aantal1===aantal2){
+                if(this.aantal1===this.aantal2){
                     alert("gelijk stand");
                     return true;
                 }
-            }
-            return false;
+                return false;
         }
         leegmaken(){
             for (let rij = 0; rij < this.rijen; rij++) {
@@ -270,7 +249,7 @@ function othello() {
             }
         }
     }
-    let bord = new Bord(8,8);
+    let bord = new Bord(4,4);
     let bord2 = new Bord(10,10);
 
     console.log(`bord.isLeeg === bord2.isLeeg=> ${bord.isLeeg === bord2.isLeeg}`);
@@ -325,54 +304,57 @@ function othello() {
         let kol = Math.floor(x / grootte);
         if(spelersituatie == "2spelers"){        
             if(geldigeZetten%2===0)
-                spelerKleur = 1;
+                {spelerKleur = 1;
+                if(bord.isGeldigeZetMog()){
+                    if(bord.isGeldigeZet(rij,kol,spelerKleur))
+                        bord.doeZet(rij,kol,spelerKleur)
+                    else
+                        alert("Je zet is ongeldig.")
+                }
+                else
+                    bord.passen();
+                if(bord.spelGedaan())
+                    bord.winaarBepalen();}
             else
-                spelerKleur = 2            
-            if(bord.isGeldigeZet(rij,kol,spelerKleur) && bord.spelGedaan()===false){
-                bord.doeZet(rij,kol,spelerKleur)
-            }
-            else{
-                alert("Je zet is ongeldig.")
-            }
+                {spelerKleur = 2;
+                if(bord.isGeldigeZetMog()){
+                    if(bord.isGeldigeZet(rij,kol,spelerKleur))
+                        bord.doeZet(rij,kol,spelerKleur)
+                    else
+                        alert("Je zet is ongeldig.")
+                }
+                else
+                    bord.passen();
+                if(bord.spelGedaan())
+                    bord.winaarBepalen();}
         }
         if(spelersituatie == "1speler"){
             if(geldigeZetten%2===0){
                 spelerKleur = 1;
-                if(bord.isGeldigeZet(rij,kol,spelerKleur) && bord.spelGedaan()===false){
-                    bord.doeZet(rij,kol,spelerKleur)
-                    setTimeout(function(){  
-                    spelerKleur =2;
-                    let randomRij;
-                    let randomKol;
-                    let geldigeZet = false;
-                        do{
-                            randomRij = Math.floor(Math.random()*bord.rijen);
-                            randomKol = Math.floor(Math.random()*bord.kolommen);
-                            if(bord.isGeldigeZet(randomRij,randomKol,spelerKleur))
-                                geldigeZet=true;
-                        }while(!geldigeZet && bord.spelGedaan()===false)
-                        if(geldigeZet)
-                            bord.doeZet(randomRij,randomKol,spelerKleur);
-                    },1000);
-
+                if(bord.isGeldigeZetMog()){
+                    if(bord.isGeldigeZet(rij,kol,spelerKleur))
+                        bord.doeZet(rij,kol,spelerKleur)
+                    else
+                        alert("Je zet is ongeldig.")
                 }
-                else{
-                    alert("Je zet is ongeldig.")
-                }
-            }
-            else{
-            let randomRij;
-            let randomKol;
-            randomRij = Math.floor(Math.random()*bord.rijen);
-            randomKol = Math.floor(Math.random()*bord.kolommen);
-            while((bord.isGeldigeZet(randomRij,randomKol,1))){
-                    randomRij = Math.floor(Math.random()*bord.rijen);
-                    randomKol = Math.floor(Math.random()*bord.kolommen);
-                }
-                bord.doeZet(randomRij,randomKol,1);
+                else
+                    bord.passen();
+                if(bord.spelGedaan())
+                    bord.winaarBepalen();
+                var TimeOut = setTimeout(function(){  
+                spelerKleur =2;
+                if(bord.isGeldigeZetMog())
+                    ComputerZet();
+                else
+                    bord.passen();
+                if(bord.spelGedaan())
+                {   clearTimeout(TimeOut);
+                    bord.winaarBepalen();}
+                },1000);
             }
         }
     }
+    
     
     function Positie(rij,kol,richting){
         nieuweRij=rij+richting.deltaRij;
@@ -387,6 +369,22 @@ function othello() {
         bord.leegmaken();
         bord.initBord();
         tekenBord();
+    }
+    function ComputerZet(){
+        let geldigeZet = false;
+        let randomRij;
+        let randomKol;
+        do{
+            randomRij = Math.floor(Math.random()*bord.rijen);
+            randomKol = Math.floor(Math.random()*bord.kolommen);
+            console.log("rij " + randomRij, "kolom " +randomKol);
+            if(bord.isGeldigeZet(randomRij,randomKol,spelerKleur))
+                geldigeZet=true;
+            console.log(geldigeZet?"Geldige Zet" : "Ongeldige Zet")
+        }while(!geldigeZet)
+        if(geldigeZet){
+            bord.doeZet(randomRij,randomKol,spelerKleur); 
+        }
     }
     function changeSpelersituatie(){
         var rad = document.myForm.spelersituatie;
@@ -413,37 +411,29 @@ function othello() {
                     inter = setInterval(() => {           
                         if(geldigeZetten%2 ===0){
                             spelerKleur = 1;
-                            let geldigeZet = false;
-                            let randomRij;
-                            let randomKol;
-                            do{
-                                randomRij = Math.floor(Math.random()*bord.rijen);
-                                randomKol = Math.floor(Math.random()*bord.kolommen);
-                                if(bord.isGeldigeZet(randomRij,randomKol,spelerKleur))
-                                    geldigeZet=true;
-                            }while(!geldigeZet && bord.spelGedaan()===false)
-                            if(geldigeZet){
-                                bord.doeZet(randomRij,randomKol,spelerKleur); 
+                            if(bord.isGeldigeZetMog()){
+                                ComputerZet();
                             }
+                            else{
+                                bord.passen();
+                            }
+                            if(bord.spelGedaan())
+                                {bord.winaarBepalen();
+                                clearInterval(inter);}                       
                         }
                         else
                         {
-                            let randomRij;
-                            let randomKol;
                             spelerKleur = 2;
-                            let geldigeZet = false;
-                            do{
-                                randomRij = Math.floor(Math.random()*bord.rijen);
-                                randomKol = Math.floor(Math.random()*bord.kolommen);
-                                if(bord.isGeldigeZet(randomRij,randomKol,spelerKleur))
-                                    geldigeZet=true;
-                            }while(!geldigeZet && bord.spelGedaan()===false)
-                            if(geldigeZet){
-                                bord.doeZet(randomRij,randomKol,spelerKleur); 
+                            if(bord.isGeldigeZetMog()){
+                                ComputerZet();
                             }
-                        } 
-                        if(bord.spelGedaan())
-                            clearInterval(i);             
+                            else{
+                                bord.passen();
+                            }
+                            if(bord.spelGedaan())
+                                {bord.winaarBepalen();
+                                clearInterval(inter);}
+                        }                                          
                     }, 1000);
                 }
             });
@@ -456,6 +446,10 @@ function othello() {
             (situ) ? console.log(situ.value): null;
                 if (this !== situ) {
                     situ = this;
+                }
+                if(this.value === "4X4"){
+                    bord= new Bord(4,4);
+                    newGame();
                 }
                 if(this.value === "6X6"){
                     bord= new Bord(6,6);

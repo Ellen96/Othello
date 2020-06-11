@@ -249,10 +249,7 @@ function othello() {
             }
         }
     }
-    let bord = new Bord(4,4);
-    let bord2 = new Bord(10,10);
-
-    console.log(`bord.isLeeg === bord2.isLeeg=> ${bord.isLeeg === bord2.isLeeg}`);
+    let bord = new Bord(8,8);
     const grootte = 75;
 
     let canvas = document.getElementById("bordCanvas");
@@ -341,6 +338,8 @@ function othello() {
                     bord.passen();
                 if(bord.spelGedaan())
                     bord.winaarBepalen();
+                if(geldigeZetten%2===0){}
+                else{
                 var TimeOut = setTimeout(function(){  
                 spelerKleur =2;
                 if(bord.isGeldigeZetMog())
@@ -351,6 +350,7 @@ function othello() {
                 {   clearTimeout(TimeOut);
                     bord.winaarBepalen();}
                 },1000);
+            }
             }
         }
     }

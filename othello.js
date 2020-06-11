@@ -329,28 +329,27 @@ function othello() {
             if(geldigeZetten%2===0){
                 spelerKleur = 1;
                 if(bord.isGeldigeZetMog()){
-                    if(bord.isGeldigeZet(rij,kol,spelerKleur))
+                    if(bord.isGeldigeZet(rij,kol,spelerKleur)){ 
                         bord.doeZet(rij,kol,spelerKleur)
+                        if(bord.spelGedaan())
+                            bord.winaarBepalen();
+                        var TimeOut = setTimeout(function(){  
+                        spelerKleur =2;
+                        if(bord.isGeldigeZetMog())
+                            ComputerZet();
+                        else
+                            bord.passen();
+                        if(bord.spelGedaan())
+                        {   clearTimeout(TimeOut);
+                            bord.winaarBepalen();}
+                        },1000);
+                    }
                     else
                         alert("Je zet is ongeldig.")
                 }
                 else
                     bord.passen();
-                if(bord.spelGedaan())
-                    bord.winaarBepalen();
-                if(geldigeZetten%2===0){}
-                else{
-                var TimeOut = setTimeout(function(){  
-                spelerKleur =2;
-                if(bord.isGeldigeZetMog())
-                    ComputerZet();
-                else
-                    bord.passen();
-                if(bord.spelGedaan())
-                {   clearTimeout(TimeOut);
-                    bord.winaarBepalen();}
-                },1000);
-            }
+                
             }
         }
     }

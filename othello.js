@@ -347,8 +347,21 @@ function othello() {
                     else
                         alert("Je zet is ongeldig.")
                 }
-                else
+                else{
                     bord.passen();
+                    if(bord.spelGedaan())
+                            bord.winaarBepalen();
+                    var TimeOut = setTimeout(function(){  
+                    spelerKleur =2;
+                    if(bord.isGeldigeZetMog())
+                        ComputerZet();
+                    else
+                        bord.passen();
+                    if(bord.spelGedaan())
+                    {   clearTimeout(TimeOut);
+                        bord.winaarBepalen();}
+                    },1000);
+                }
                 
             }
         }
